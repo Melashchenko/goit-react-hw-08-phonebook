@@ -1,13 +1,14 @@
+import { Btn, ContactsEl } from 'components/ContactEl/ContactEl.styled';
 import React from 'react';
 
 export const ContactEl = ({
   contact: { id, name, number },
   onDeleteContact,
 }) => (
-  <li>
+  <ContactsEl>
     <p>
       {name}: {number}
     </p>
-    <button onClick={() => onDeleteContact(id)}>Delete</button>
-  </li>
+    <Btn onClick={() => onDeleteContact(id)}>Delete</Btn>
+  </ContactsEl>
 );

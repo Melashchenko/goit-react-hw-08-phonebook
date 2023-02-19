@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import shortid from 'shortid';
 
 import { ContactList } from './ContactList/ContactList';
-import { ContactForm } from './ContactForm/ContactForm';
+
 import { Filter } from './Filter/Filter';
+import { ContactFormFormik } from './ContactFormFormik/ContactFormFormik';
+import { Box } from './Box';
 
 export class App extends Component {
   static defaultProps = {
@@ -70,27 +72,35 @@ export class App extends Component {
     const { filter, contacts } = this.state;
     const normalizedFilter = filter.toLowerCase();
 
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
+    return contacts.filter(({ name }) =>
+      name.toLowerCase().includes(normalizedFilter)
     );
   };
 
   render() {
     const { filter } = this.state;
     const filterContacts = this.getFilterContacts();
+    const { addContact, changeFilter, deleteContact } = this;
 
     return (
-      <>
-        <h1>Phonebook</h1>
-        <ContactForm onAddContact={this.addContact} />
+      <Box as="div" p={15}>
+        <Box as="h1" p={10}>
+          Phonebook
+        </Box>
+        <Box as="div" display="flex" flexDirection="column" width={280}>
+          <ContactFormFormik onAddContact={addContact} />
 
-        <h2>Contacts</h2>
-        <Filter filter={filter} onFilter={this.changeFilter} />
-        <ContactList
-          contacts={filterContacts}
-          onDeleteContact={this.deleteContact}
-        />
-      </>
+          <Box as="h2" p={10}>
+            Contacts
+          </Box>
+
+          <Filter filter={filter} onFilter={changeFilter} />
+          <ContactList
+            contacts={filterContacts}
+            onDeleteContact={deleteContact}
+          />
+        </Box>
+      </Box>
     );
   }
 }
