@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 import { Formik } from 'formik';
 import { object, string } from 'yup';
 import {
@@ -52,4 +54,8 @@ export const ContactFormFormik = ({ onAddContact }) => {
       </Container>
     </Formik>
   );
+};
+
+ContactFormFormik.propTypes = {
+  onAddContact: PropTypes.func.isRequired,
 };
