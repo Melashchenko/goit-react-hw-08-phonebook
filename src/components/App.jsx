@@ -34,7 +34,7 @@ export class App extends Component {
   };
 
   state = {
-    contacts: this.props.initialContacts,
+    contacts: [],
     filter: '',
   };
 
@@ -76,6 +76,20 @@ export class App extends Component {
       name.toLowerCase().includes(normalizedFilter)
     );
   };
+
+  componentDidMount() {
+    const contactsLocal = JSON.parse(localStorage.getItem('contacts'));
+
+    if (contactsLocal) {
+      this.setState({ contacts: contactsLocal });
+    }
+  }
+
+  componentDidUpdate(prevState) {
+    if (this.state !== prevState) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
 
   render() {
     const { filter } = this.state;
