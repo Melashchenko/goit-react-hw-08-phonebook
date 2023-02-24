@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useState, useEffect } from 'react';
 import shortid from 'shortid';
 
 import { ContactList } from './ContactList/ContactList';
@@ -7,41 +7,12 @@ import { Filter } from './Filter/Filter';
 import { ContactFormFormik } from './ContactFormFormik/ContactFormFormik';
 import { Box } from './Box';
 
-export class App extends Component {
-  static defaultProps = {
-    initialContacts: [
-      {
-        id: shortid.generate(),
-        name: 'Rosie Simpson',
-        number: '459-12-56',
-      },
-      {
-        id: shortid.generate(),
-        name: 'Hermine Kline',
-        number: '443-89-12',
-      },
-      {
-        id: shortid.generate(),
-        name: 'Eden Clements',
-        number: '645-17-79',
-      },
-      {
-        id: shortid.generate(),
-        name: 'Annie Copeland',
-        number: '227-91-26',
-      },
-    ],
-  };
+export const App = () => {
+  const [contacts, getContacts] = useState([]);
+  const [filter, getFilter] = useState('');
 
-  state = {
-    contacts: [],
-    filter: '',
-  };
-
-  addContact = ({ name, number }) => {
-    const oldContact = this.state.contacts.find(
-      contact => contact.name === name
-    );
+  const addContact = ({ name, number }) => {
+    const oldContact = contacts.find(contact => contact.name === name);
 
     if (oldContact) {
       return alert(`${name} is already in contacts.`);
@@ -53,23 +24,18 @@ export class App extends Component {
       number: number,
     };
 
-    this.setState(({ contacts }) => ({
-      contacts: [newContact, ...contacts],
-    }));
+    getContacts(prevState => [newContact, ...prevState]);
   };
 
-  changeFilter = e => {
-    this.setState({ filter: e.currentTarget.value });
+  const deleteContact = contactId => {
+    getContacts(prevState => prevState.filter(({ id }) => id !== contactId));
   };
 
-  deleteContact = contactId => {
-    this.setState(({ contacts }) => ({
-      contacts: contacts.filter(({ id }) => id !== contactId),
-    }));
+  const changeFilter = e => {
+    getFilter(e.currentTarget.value);
   };
 
-  getFilterContacts = () => {
-    const { filter, contacts } = this.state;
+  const getFilterContacts = () => {
     const normalizedFilter = filter.toLowerCase();
 
     return contacts.filter(({ name }) =>
@@ -77,44 +43,38 @@ export class App extends Component {
     );
   };
 
-  componentDidMount() {
+  useEffect(() => {
+    if (contacts.length >= 1) {
+      localStorage.setItem('contacts', JSON.stringify(contacts));
+    }
+  }, [contacts]);
+
+  useEffect(() => {
     const contactsLocal = JSON.parse(localStorage.getItem('contacts'));
 
     if (contactsLocal) {
-      this.setState({ contacts: contactsLocal });
+      getContacts(contactsLocal);
     }
-  }
+  }, []);
 
-  componentDidUpdate(prevState) {
-    if (this.state !== prevState) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
-
-  render() {
-    const { filter } = this.state;
-    const filterContacts = this.getFilterContacts();
-    const { addContact, changeFilter, deleteContact } = this;
-
-    return (
-      <Box as="div" p={15}>
-        <Box as="h1" p={10}>
-          Phonebook
-        </Box>
-        <Box as="div" display="flex" flexDirection="column" width={280}>
-          <ContactFormFormik onAddContact={addContact} />
-
-          <Box as="h2" p={10}>
-            Contacts
-          </Box>
-
-          <Filter filter={filter} onFilter={changeFilter} />
-          <ContactList
-            contacts={filterContacts}
-            onDeleteContact={deleteContact}
-          />
-        </Box>
+  return (
+    <Box as="div" p={15}>
+      <Box as="h1" p={10}>
+        Phonebook
       </Box>
-    );
-  }
-}
+      <Box as="div" display="flex" flexDirection="column" width={280}>
+        <ContactFormFormik onAddContact={addContact} />
+
+        <Box as="h2" p={10}>
+          Contacts
+        </Box>
+
+        <Filter filter={filter} onFilter={changeFilter} />
+        <ContactList
+          contacts={getFilterContacts()}
+          onDeleteContact={deleteContact}
+        />
+      </Box>
+    </Box>
+  );
+};
