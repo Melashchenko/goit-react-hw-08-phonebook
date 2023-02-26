@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import shortid from 'shortid';
-
-import { ContactList } from './ContactList/ContactList';
-
-import { Filter } from './Filter/Filter';
-import { ContactFormFormik } from './ContactFormFormik/ContactFormFormik';
 import { Box } from './Box';
 
+import { ContactList } from './ContactList/ContactList';
+import { Filter } from './Filter/Filter';
+import { ContactFormFormik } from './ContactFormFormik/ContactFormFormik';
+import { useLocalStorage } from 'hooks/useLocalStorage';
+
 export const App = () => {
-  const [contacts, getContacts] = useState([]);
-  const [filter, getFilter] = useState('');
+  const [contacts, setContacts] = useLocalStorage('contacts', []);
+  const [filter, setFilter] = useState('');
 
   const addContact = ({ name, number }) => {
     const oldContact = contacts.find(contact => contact.name === name);
@@ -24,15 +24,15 @@ export const App = () => {
       number: number,
     };
 
-    getContacts(prevState => [newContact, ...prevState]);
+    setContacts(prevState => [newContact, ...prevState]);
   };
 
   const deleteContact = contactId => {
-    getContacts(prevState => prevState.filter(({ id }) => id !== contactId));
+    setContacts(prevState => prevState.filter(({ id }) => id !== contactId));
   };
 
   const changeFilter = e => {
-    getFilter(e.currentTarget.value);
+    setFilter(e.currentTarget.value);
   };
 
   const getFilterContacts = () => {
@@ -42,20 +42,6 @@ export const App = () => {
       name.toLowerCase().includes(normalizedFilter)
     );
   };
-
-  useEffect(() => {
-    if (contacts.length >= 1) {
-      localStorage.setItem('contacts', JSON.stringify(contacts));
-    }
-  }, [contacts]);
-
-  useEffect(() => {
-    const contactsLocal = JSON.parse(localStorage.getItem('contacts'));
-
-    if (contactsLocal) {
-      getContacts(contactsLocal);
-    }
-  }, []);
 
   return (
     <Box as="div" p={15}>
@@ -78,3 +64,17 @@ export const App = () => {
     </Box>
   );
 };
+
+// useEffect(() => {
+//   if (contacts.length >= 1) {
+//     localStorage.setItem('contacts', JSON.stringify(contacts));
+//   }
+// }, [contacts]);
+
+// useEffect(() => {
+//   const contactsLocal = JSON.parse(localStorage.getItem('contacts'));
+
+//   if (contactsLocal) {
+//     getContacts(contactsLocal);
+//   }
+// }, []);

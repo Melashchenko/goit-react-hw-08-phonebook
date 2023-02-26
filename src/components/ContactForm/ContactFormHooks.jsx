@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import shortid from 'shortid';
 
-export const ContactFormHooks = () => {
+export const ContactFormHooks = ({ onAddContact }) => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -20,10 +20,19 @@ export const ContactFormHooks = () => {
     }
   };
 
+  const handleSubmit = e => {
+    e.preventDefault();
+
+    onAddContact(name, number);
+
+    setName('');
+    setNumber('');
+  };
+
   const nameInputId = shortid.generate();
 
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <label>
         Name
         <input
