@@ -7,6 +7,9 @@ import { Filter } from './Filter/Filter';
 import { ContactFormFormik } from './ContactFormFormik/ContactFormFormik';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { getClickValue, update } from 'redux/clickSlice';
+
 export const App = () => {
   const [contacts, setContacts] = useLocalStorage('contacts', []);
   const [filter, setFilter] = useState('');
@@ -43,6 +46,9 @@ export const App = () => {
     );
   };
 
+  const dispatch = useDispatch();
+  const numberOfClicks = useSelector(getClickValue);
+
   return (
     <Box as="div" p={15}>
       <Box as="h1" p={10}>
@@ -60,6 +66,16 @@ export const App = () => {
           contacts={getFilterContacts()}
           onDeleteContact={deleteContact}
         />
+        <h1>Clicks {numberOfClicks}</h1>
+        <button type="button" onClick={() => dispatch(update(5))}>
+          Click 5
+        </button>
+        <button type="button" onClick={() => dispatch(update(10))}>
+          Click 10
+        </button>
+        <button type="button" onClick={() => dispatch(update(-20))}>
+          Click -20
+        </button>
       </Box>
     </Box>
   );
