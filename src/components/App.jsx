@@ -1,18 +1,28 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import shortid from 'shortid';
 import { Box } from './Box';
 
 import { ContactList } from './ContactList/ContactList';
 import { Filter } from './Filter/Filter';
 import { ContactFormFormik } from './ContactFormFormik/ContactFormFormik';
-import { useLocalStorage } from 'hooks/useLocalStorage';
+// import { useLocalStorage } from 'hooks/useLocalStorage';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { getClickValue, update } from 'redux/clickSlice';
+import {
+  add,
+  getContactsState,
+  getFilter,
+  getFilterState,
+  remove,
+} from 'redux/contactSlice';
 
 export const App = () => {
-  const [contacts, setContacts] = useLocalStorage('contacts', []);
-  const [filter, setFilter] = useState('');
+  // const [contacts, setContacts] = useLocalStorage('contacts', []);
+  // const [filter, setFilter] = useState('');
+
+  const contacts = useSelector(getContactsState);
+  const filter = useSelector(getFilterState);
+  const dispatch = useDispatch();
 
   const addContact = ({ name, number }) => {
     const oldContact = contacts.find(contact => contact.name === name);
@@ -27,15 +37,19 @@ export const App = () => {
       number: number,
     };
 
-    setContacts(prevState => [newContact, ...prevState]);
+    dispatch(add({ name, number, ...newContact }));
+
+    // setContacts(prevState => [newContact, ...prevState]);
   };
 
   const deleteContact = contactId => {
-    setContacts(prevState => prevState.filter(({ id }) => id !== contactId));
+    // setContacts(prevState => prevState.filter(({ id }) => id !== contactId));
+    dispatch(remove(contactId));
   };
 
   const changeFilter = e => {
-    setFilter(e.currentTarget.value);
+    // setFilter(e.currentTarget.value);
+    dispatch(getFilter(e.currentTarget.value));
   };
 
   const getFilterContacts = () => {
@@ -45,9 +59,6 @@ export const App = () => {
       name.toLowerCase().includes(normalizedFilter)
     );
   };
-
-  const dispatch = useDispatch();
-  const numberOfClicks = useSelector(getClickValue);
 
   return (
     <Box as="div" p={15}>
@@ -66,16 +77,6 @@ export const App = () => {
           contacts={getFilterContacts()}
           onDeleteContact={deleteContact}
         />
-        <h1>Clicks {numberOfClicks}</h1>
-        <button type="button" onClick={() => dispatch(update(5))}>
-          Click 5
-        </button>
-        <button type="button" onClick={() => dispatch(update(10))}>
-          Click 10
-        </button>
-        <button type="button" onClick={() => dispatch(update(-20))}>
-          Click -20
-        </button>
       </Box>
     </Box>
   );

@@ -1,5 +1,4 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { persistedClicksReducer } from './clickSlice';
 import { persistStore } from 'redux-persist';
 import {
   FLUSH,
@@ -10,9 +9,11 @@ import {
   REGISTER,
 } from 'redux-persist';
 
+import { persistedContactReducer } from './contactSlice';
+
 export const store = configureStore({
   reducer: {
-    clicks: persistedClicksReducer,
+    contactsState: persistedContactReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
