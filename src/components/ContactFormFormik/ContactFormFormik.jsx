@@ -1,5 +1,3 @@
-import PropTypes from 'prop-types';
-
 import { Formik } from 'formik';
 import { object, string } from 'yup';
 import {
@@ -9,6 +7,10 @@ import {
   Input,
   Label,
 } from './ContactFormFormik.styled';
+
+import { useSelector, useDispatch } from 'react-redux';
+import { add, getContactsState } from 'redux/contactSlice';
+import shortid from 'shortid';
 
 const schema = object({
   name: string()
@@ -26,10 +28,29 @@ const schema = object({
 });
 const initialValues = { name: '', number: '' };
 
-export const ContactFormFormik = ({ onAddContact }) => {
+export const ContactFormFormik = () => {
+  const contacts = useSelector(getContactsState);
+  const dispatch = useDispatch();
+
   const handleSubmit = (values, { resetForm }) => {
-    onAddContact(values);
+    addContact(values);
     resetForm();
+  };
+
+  const addContact = ({ name, number }) => {
+    const oldContact = contacts.find(contact => contact.name === name);
+
+    if (oldContact) {
+      return alert(`${name} is already in contacts.`);
+    }
+
+    const newContact = {
+      id: shortid.generate(),
+      name: name,
+      number: number,
+    };
+
+    dispatch(add({ name, number, ...newContact }));
   };
 
   return (
@@ -54,8 +75,4 @@ export const ContactFormFormik = ({ onAddContact }) => {
       </Container>
     </Formik>
   );
-};
-
-ContactFormFormik.propTypes = {
-  onAddContact: PropTypes.func.isRequired,
 };

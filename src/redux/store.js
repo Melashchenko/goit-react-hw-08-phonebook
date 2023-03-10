@@ -10,11 +10,14 @@ import {
 } from 'redux-persist';
 
 import { persistedContactReducer } from './contactSlice';
+import { filterSlice } from './filterSlice';
 
 export const store = configureStore({
   reducer: {
     contactsState: persistedContactReducer,
+    filtersState: filterSlice.reducer,
   },
+
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {

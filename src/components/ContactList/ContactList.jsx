@@ -1,21 +1,37 @@
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
+import { remove, getContactsState } from 'redux/contactSlice';
+import { getFilterState } from 'redux/filterSlice';
 
 import { ContactEl } from 'components/ContactEl/ContactEl';
-import React from 'react';
 
-export const ContactList = ({ contacts, onDeleteContact }) => (
-  <ul>
-    {contacts.map(contact => (
-      <ContactEl
-        contact={contact}
-        key={contact.id}
-        onDeleteContact={onDeleteContact}
-      />
-    ))}
-  </ul>
-);
+export const ContactList = () => {
+  const contacts = useSelector(getContactsState);
+  const filter = useSelector(getFilterState);
+  const dispatch = useDispatch();
 
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
-  onDeleteContact: PropTypes.func.isRequired,
+  const deleteContact = contactId => {
+    dispatch(remove(contactId));
+  };
+
+  const getFilterContacts = () => {
+    const normalizedFilter = filter.toLowerCase();
+
+    return contacts.filter(({ name }) =>
+      name.toLowerCase().includes(normalizedFilter)
+    );
+  };
+
+  const filterContacts = getFilterContacts();
+
+  return (
+    <ul>
+      {filterContacts.map(contact => (
+        <ContactEl
+          contact={contact}
+          key={contact.id}
+          onDeleteContact={deleteContact}
+        />
+      ))}
+    </ul>
+  );
 };
