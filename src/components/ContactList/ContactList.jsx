@@ -1,37 +1,44 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { remove, getContactsState } from 'redux/contactSlice';
+import { getContactsState } from 'redux/contactSlice';
 import { getFilterState } from 'redux/filterSlice';
 
 import { ContactEl } from 'components/ContactEl/ContactEl';
+import { useEffect } from 'react';
+import { fetchContacts } from 'redux/operations';
+import { Box } from 'components/Box';
 
 export const ContactList = () => {
-  const contacts = useSelector(getContactsState);
+  const { items, isLoading, error } = useSelector(getContactsState);
   const filter = useSelector(getFilterState);
   const dispatch = useDispatch();
-
-  const deleteContact = contactId => {
-    dispatch(remove(contactId));
-  };
 
   const getFilterContacts = () => {
     const normalizedFilter = filter.toLowerCase();
 
-    return contacts.filter(({ name }) =>
+    return items.filter(({ name }) =>
       name.toLowerCase().includes(normalizedFilter)
     );
   };
 
   const filterContacts = getFilterContacts();
 
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
   return (
-    <ul>
-      {filterContacts.map(contact => (
-        <ContactEl
-          contact={contact}
-          key={contact.id}
-          onDeleteContact={deleteContact}
-        />
-      ))}
-    </ul>
+    <div>
+      {isLoading && <p>Loading ...</p>}
+      {error && <p>{error}</p>}
+      {items.length > 0 &&
+        filterContacts.map(contact => (
+          <ContactEl contact={contact} key={contact.id} />
+        ))}
+      {items.length <= 0 && (
+        <Box as="h2" p={10}>
+          No contacts saved
+        </Box>
+      )}
+    </div>
   );
 };

@@ -9,8 +9,9 @@ import {
 } from './ContactFormFormik.styled';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { add, getContactsState } from 'redux/contactSlice';
-import shortid from 'shortid';
+import { getContactsState } from 'redux/contactSlice';
+
+import { addContact } from 'redux/operations';
 
 const schema = object({
   name: string()
@@ -19,38 +20,32 @@ const schema = object({
       'Name may contain only letters, apostrophe, dash and spaces.'
     )
     .required('Name is a required'),
-  number: string()
+  phone: string()
     .matches(
       /\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/,
       'Phone number must be digits and can contain spaces, dashes, parentheses and can start with +'
     )
     .required('Phone is a required'),
 });
-const initialValues = { name: '', number: '' };
+const initialValues = { name: '', phone: '' };
 
 export const ContactFormFormik = () => {
-  const contacts = useSelector(getContactsState);
+  const { items } = useSelector(getContactsState);
   const dispatch = useDispatch();
 
-  const handleSubmit = (values, { resetForm }) => {
-    addContact(values);
-    resetForm();
-  };
-
-  const addContact = ({ name, number }) => {
-    const oldContact = contacts.find(contact => contact.name === name);
+  const handleSubmit = ({ name, phone }, { resetForm }) => {
+    const oldContact = items.find(contact => contact.name === name);
 
     if (oldContact) {
       return alert(`${name} is already in contacts.`);
     }
 
     const newContact = {
-      id: shortid.generate(),
       name: name,
-      number: number,
+      phone: phone,
     };
-
-    dispatch(add({ name, number, ...newContact }));
+    dispatch(addContact(newContact));
+    resetForm();
   };
 
   return (
@@ -65,10 +60,10 @@ export const ContactFormFormik = () => {
           <Input type="text" name="name" />
           <Error name="name" component="div" />
         </Label>
-        <Label htmlFor="number">
-          Number
-          <Input type="tel" name="number" />
-          <Error name="number" component="div" />
+        <Label htmlFor="phone">
+          Phone
+          <Input type="tel" name="phone" />
+          <Error name="phone" component="div" />
         </Label>
 
         <Btn type="submit">Add contact</Btn>
