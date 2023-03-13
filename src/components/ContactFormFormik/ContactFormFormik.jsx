@@ -1,4 +1,6 @@
 import { Formik } from 'formik';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { object, string } from 'yup';
 import {
   Btn,
@@ -7,11 +9,8 @@ import {
   Input,
   Label,
 } from './ContactFormFormik.styled';
-
-import { useSelector, useDispatch } from 'react-redux';
-import { getContactsState } from 'redux/contactSlice';
-
 import { addContact } from 'redux/operations';
+import { selectContacts } from 'redux/selectors';
 
 const schema = object({
   name: string()
@@ -30,11 +29,11 @@ const schema = object({
 const initialValues = { name: '', phone: '' };
 
 export const ContactFormFormik = () => {
-  const { items } = useSelector(getContactsState);
+  const contacts = useSelector(selectContacts);
   const dispatch = useDispatch();
 
   const handleSubmit = ({ name, phone }, { resetForm }) => {
-    const oldContact = items.find(contact => contact.name === name);
+    const oldContact = contacts.find(contact => contact.name === name);
 
     if (oldContact) {
       return alert(`${name} is already in contacts.`);

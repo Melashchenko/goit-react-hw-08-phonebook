@@ -1,21 +1,28 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { getContactsState } from 'redux/contactSlice';
-import { getFilterState } from 'redux/filterSlice';
+import { useEffect } from 'react';
 
 import { ContactEl } from 'components/ContactEl/ContactEl';
-import { useEffect } from 'react';
 import { fetchContacts } from 'redux/operations';
 import { Box } from 'components/Box';
+import {
+  selectContacts,
+  selectError,
+  selectFilter,
+  selectIsLoading,
+} from 'redux/selectors';
 
 export const ContactList = () => {
-  const { items, isLoading, error } = useSelector(getContactsState);
-  const filter = useSelector(getFilterState);
+  const contacts = useSelector(selectContacts);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
+  const filter = useSelector(selectFilter);
+
   const dispatch = useDispatch();
 
   const getFilterContacts = () => {
     const normalizedFilter = filter.toLowerCase();
 
-    return items.filter(({ name }) =>
+    return contacts.filter(({ name }) =>
       name.toLowerCase().includes(normalizedFilter)
     );
   };
@@ -26,19 +33,22 @@ export const ContactList = () => {
     dispatch(fetchContacts());
   }, [dispatch]);
 
+  if (isLoading !== true && filterContacts.length === 0) {
+    return (
+      <Box as="p" p={10}>
+        No contacts saved
+      </Box>
+    );
+  }
+
   return (
     <div>
       {isLoading && <p>Loading ...</p>}
       {error && <p>{error}</p>}
-      {items.length > 0 &&
+      {contacts.length > 0 &&
         filterContacts.map(contact => (
           <ContactEl contact={contact} key={contact.id} />
         ))}
-      {items.length <= 0 && (
-        <Box as="h2" p={10}>
-          No contacts saved
-        </Box>
-      )}
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+
 import { addContact, deleteContact, fetchContacts } from './operations';
 
 const initialState = {
@@ -9,40 +10,37 @@ const initialState = {
   },
 };
 
-export const contactSlice = createSlice({
+const handlePending = state => {
+  state.contacts.isLoading = true;
+};
+
+const handleRejected = (state, action) => {
+  state.contacts.isLoading = false;
+  state.contacts.error = action.payload;
+};
+
+const contactSlice = createSlice({
   name: 'contact',
   initialState,
 
   extraReducers: {
-    [fetchContacts.pending](state) {
-      state.contacts.isLoading = true;
-    },
+    [fetchContacts.pending]: handlePending,
     [fetchContacts.fulfilled](state, action) {
       state.contacts.isLoading = false;
       state.contacts.error = null;
       state.contacts.items = action.payload;
     },
-    [fetchContacts.rejected](state, action) {
-      state.contacts.isLoading = false;
-      state.contacts.error = action.payload;
-    },
+    [fetchContacts.rejected]: handleRejected,
 
-    [addContact.pending](state) {
-      state.contacts.isLoading = true;
-    },
+    [addContact.pending]: handlePending,
     [addContact.fulfilled](state, action) {
       state.contacts.isLoading = false;
       state.contacts.error = null;
       state.contacts.items.splice(0, 0, action.payload);
     },
-    [addContact.rejected](state, action) {
-      state.contacts.isLoading = false;
-      state.contacts.error = action.payload;
-    },
+    [addContact.rejected]: handleRejected,
 
-    [deleteContact.pending](state) {
-      state.contacts.isLoading = true;
-    },
+    [deleteContact.pending]: handlePending,
     [deleteContact.fulfilled](state, action) {
       state.contacts.isLoading = false;
       state.contacts.error = null;
@@ -51,13 +49,8 @@ export const contactSlice = createSlice({
       );
       state.contacts.items.splice(index, 1);
     },
-    [deleteContact.rejected](state, action) {
-      state.contacts.isLoading = false;
-      state.contacts.error = action.payload;
-    },
+    [deleteContact.rejected]: handleRejected,
   },
 });
 
-// Selectors
-
-export const getContactsState = state => state.contactsState.contacts;
+export const contactReducer = contactSlice.reducer;
