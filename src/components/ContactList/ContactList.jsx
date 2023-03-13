@@ -2,14 +2,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 
 import { ContactEl } from 'components/ContactEl/ContactEl';
-import { fetchContacts } from 'redux/operations';
+import { fetchContacts } from 'redux/contacts/operations';
 import { Box } from 'components/Box';
 import {
   selectContacts,
   selectError,
-  selectFilter,
   selectIsLoading,
-} from 'redux/selectors';
+} from 'redux/contacts/selectors';
+import { selectFilter } from 'redux/filter/selectors';
 
 export const ContactList = () => {
   const contacts = useSelector(selectContacts);
