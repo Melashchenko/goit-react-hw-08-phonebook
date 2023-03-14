@@ -3,6 +3,9 @@ import { Box } from './Box';
 import { ContactList } from './ContactList/ContactList';
 import { Filter } from './Filter/Filter';
 import { ContactFormFormik } from './ContactFormFormik/ContactFormFormik';
+import { RegisterForm } from './RegisterForm/RegisterForm';
+import { LoginForm } from './LoginForm/LoginForm';
+import { UserMenu } from './UserMenu/UserMenu';
 
 export const App = () => {
   return (
@@ -19,6 +22,9 @@ export const App = () => {
 
         <Filter />
         <ContactList />
+        <RegisterForm />
+        <LoginForm />
+        <UserMenu />
       </Box>
     </Box>
   );

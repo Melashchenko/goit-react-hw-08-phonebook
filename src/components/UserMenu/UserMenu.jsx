@@ -1,8 +1,10 @@
+import { Username, Wrapper } from './UserMenu.styled';
+
 export const UserMenu = () => {
   return (
-    <div>
-      <p>mango@mail.com</p>
+    <Wrapper>
+      <Username>mango@mail.com</Username>
       <button>Logout</button>
-    </div>
+    </Wrapper>
   );
 };
