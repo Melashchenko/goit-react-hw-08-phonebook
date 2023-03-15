@@ -1,10 +1,18 @@
+import { useDispatch, useSelector } from 'react-redux';
+import { logOut } from 'redux/auth/operations';
+import { selectUser } from 'redux/auth/selectors';
 import { Username, Wrapper } from './UserMenu.styled';
 
 export const UserMenu = () => {
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
+
   return (
     <Wrapper>
-      <Username>mango@mail.com</Username>
-      <button>Logout</button>
+      <Username>Welcome, {user.name}</Username>
+      <button type="button" onClick={() => dispatch(logOut())}>
+        Logout
+      </button>
     </Wrapper>
   );
 };

@@ -19,20 +19,20 @@ const schema = object({
       'Name may contain only letters, apostrophe, dash and spaces.'
     )
     .required('Name is a required'),
-  phone: string()
+  number: string()
     .matches(
       /\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/,
       'Phone number must be digits and can contain spaces, dashes, parentheses and can start with +'
     )
     .required('Phone is a required'),
 });
-const initialValues = { name: '', phone: '' };
+const initialValues = { name: '', number: '' };
 
 export const ContactFormFormik = () => {
   const contacts = useSelector(selectContacts);
   const dispatch = useDispatch();
 
-  const handleSubmit = ({ name, phone }, { resetForm }) => {
+  const handleSubmit = ({ name, number }, { resetForm }) => {
     const oldContact = contacts.find(contact => contact.name === name);
 
     if (oldContact) {
@@ -41,7 +41,7 @@ export const ContactFormFormik = () => {
 
     const newContact = {
       name: name,
-      phone: phone,
+      number: number,
     };
     dispatch(addContact(newContact));
     resetForm();
@@ -59,10 +59,10 @@ export const ContactFormFormik = () => {
           <Input type="text" name="name" />
           <Error name="name" component="div" />
         </Label>
-        <Label htmlFor="phone">
+        <Label htmlFor="number">
           Phone
-          <Input type="tel" name="phone" />
-          <Error name="phone" component="div" />
+          <Input type="tel" name="number" />
+          <Error name="number" component="div" />
         </Label>
 
         <Btn type="submit">Add contact</Btn>
