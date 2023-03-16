@@ -7,6 +7,7 @@ export default function Contacts() {
   return (
     <Box as="div" display="flex" flexDirection="column" width={280}>
       <title>Your contacts </title>
+
       <ContactFormFormik />
       <Filter />
       <ContactList />
