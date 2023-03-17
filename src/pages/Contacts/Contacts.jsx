@@ -5,7 +5,7 @@ import { Filter } from 'components/Filter/Filter';
 
 export default function Contacts() {
   return (
-    <Box as="div" display="flex" flexDirection="column" width={280}>
+    <Box as="main" display="flex" flexDirection="column" width={280}>
       <title>Your contacts </title>
 
       <ContactFormFormik />
